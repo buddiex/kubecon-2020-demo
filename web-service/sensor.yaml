@@ -9,9 +9,13 @@ spec:
     - name: picture-dep
       eventSourceName: minio
       eventName: picture
+    - name: json-dep
+      eventSourceName: minio
+      eventName: json
   triggers:
     - template:
-        name: minio-workflow-trigger
+        name: minio-picture-trigger
+        conditions: "picture-dep"
         k8s:
           group: argoproj.io
           version: v1alpha1
@@ -100,5 +104,88 @@ spec:
           parameters:
             - src:
                 dependencyName: picture-dep
+                dataKey: notification.0.s3.object.key
+              dest: spec.arguments.parameters.0.value
+
+    - template:
+        name: minio-json-trigger
+        conditions: "json-dep"
+        k8s:
+          group: argoproj.io
+          version: v1alpha1
+          resource: workflows
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: process-raw-log-
+              spec:
+                entrypoint: process-raw-log
+                arguments:
+                  parameters:
+                  - name: path
+                    value: input.json
+                templates:
+                  - name: process-raw-log
+                    steps:
+                    - - name: next-step
+                        template: next-step
+                        arguments:
+                          parameters:
+                          - name: path
+                            value: "{{workflow.parameters.path}}"
+                    # evaluate the result in parallel
+                    - - name: heads
+                        template: form                 # call heads template if "heads"
+                        when: "{{steps.next-step.outputs.parameters.rst}} == form"
+                      - name: tails
+                        template: lp5                 # call tails template if "tails"
+                        when: "{{steps.next-step.outputs.parameters.rst}} == lp5"
+                  
+                  - name: next-step
+                    parameters:
+                      - name: path
+                    artifacts:
+                    - name: rawlog
+                      path: /rawlog.json
+                      s3:
+                        endpoint: kubecon-demo-minio:9000
+                        insecure: true
+                        bucket: kubecon-demo
+                        key: "{{inputs.parameters.path}}"
+                        accessKeySecret:
+                          name: kubecon-demo-minio
+                          key: accesskey
+                        secretKeySecret:
+                          name: kubecon-demo-minio
+                          key: secretkey
+
+                    container:
+                      image: python_next_step:0.3
+                      command: [python]
+                      args: ["/app/next_step.py rawlog.json"]  # generate the content of hello_world.txt
+                      imagePullPolicy: IfNotPresent
+                    outputs:
+                      parameters:
+                      - name: rst      # name of output parameter
+                        valueFrom:
+                          path: /out.txt    # set the value of hello-param to the contents of this hello-world.txt
+
+                  - name: form
+                    container:
+                      image: alpine:3.6
+                      command: [sh, -c]
+                      args: ["echo \"processing form\""]
+
+                  - name: lp5
+                    container:
+                      image: alpine:3.6
+                      command: [sh, -c]
+                      args: ["echo \"processing lp5\""]
+          parameters:
+            - src:
+                dependencyName: json-dep
                 dataKey: notification.0.s3.object.key
               dest: spec.arguments.parameters.0.value
