@@ -6,9 +6,9 @@ spec:
   template:
     serviceAccountName: argo-events-sa
   dependencies:
-    - name: test-dep
+    - name: picture-dep
       eventSourceName: minio
-      eventName: example
+      eventName: picture
   triggers:
     - template:
         name: minio-workflow-trigger
@@ -99,6 +99,6 @@ spec:
           # The container args from the workflow are overridden by the s3 notification key
           parameters:
             - src:
-                dependencyName: test-dep
+                dependencyName: picture-dep
                 dataKey: notification.0.s3.object.key
               dest: spec.arguments.parameters.0.value
