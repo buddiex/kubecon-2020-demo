@@ -144,22 +144,23 @@ spec:
                         when: "{{steps.next-step.outputs.parameters.rst}} == lp5"
                   
                   - name: next-step
-                    parameters:
-                      - name: path
-                    artifacts:
-                    - name: rawlog
-                      path: /rawlog.json
-                      s3:
-                        endpoint: kubecon-demo-minio:9000
-                        insecure: true
-                        bucket: kubecon-demo
-                        key: "{{inputs.parameters.path}}"
-                        accessKeySecret:
-                          name: kubecon-demo-minio
-                          key: accesskey
-                        secretKeySecret:
-                          name: kubecon-demo-minio
-                          key: secretkey
+                    inputs:
+                      parameters:
+                        - name: path
+                      artifacts:
+                      - name: rawlog
+                        path: /rawlog.json
+                        s3:
+                          endpoint: kubecon-demo-minio:9000
+                          insecure: true
+                          bucket: kubecon-demo
+                          key: "{{inputs.parameters.path}}"
+                          accessKeySecret:
+                            name: kubecon-demo-minio
+                            key: accesskey
+                          secretKeySecret:
+                            name: kubecon-demo-minio
+                            key: secretkey
 
                     container:
                       image: python_next_step:0.4
