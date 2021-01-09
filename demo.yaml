@@ -8,7 +8,7 @@ items:
       labels:
         type: infrastructure
     spec:
-      project: default
+      project: minio_pic
       source:
         repoURL: https://github.com/buddiex/kubecon-2020-demo.git
         path: infrastructure/argo-events
@@ -27,7 +27,7 @@ items:
       labels:
         type: infrastructure
     spec:
-      project: default
+      project: minio_pic
       source:
         repoURL: https://github.com/buddiex/kubecon-2020-demo.git
         path: infrastructure/argo-rollouts
@@ -41,7 +41,7 @@ items:
       labels:
         type: infrastructure
     spec:
-      project: default
+      project: minio_pic
       source:
         repoURL: https://github.com/buddiex/kubecon-2020-demo.git
         path: infrastructure/argo-workflow
@@ -55,7 +55,7 @@ items:
       labels:
         type: infrastructure
     spec:
-      project: default
+      project: minio_pic
       source:
         repoURL: https://github.com/buddiex/kubecon-2020-demo.git
         path: infrastructure/minio
@@ -69,7 +69,7 @@ items:
       labels:
         type: application
     spec:
-      project: default
+      project: minio_pic
       source:
         repoURL: https://github.com/buddiex/kubecon-2020-demo.git
         path: web-service
@@ -77,7 +77,7 @@ items:
       syncPolicy: *policy
 
 
-      argocd app create web-service --repo https://github.com/buddiex/kubecon-2020-demo.git  --path web-service --dest-namespace default --dest-server https://kubernetes.default.svc 
+      # argocd app create web-service --repo https://github.com/buddiex/kubecon-2020-demo.git  --path web-service --dest-namespace default --dest-server https://kubernetes.default.svc --dest-namespace kubecon-demo
   - apiVersion: v1
     kind: Namespace
     metadata:

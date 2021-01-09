@@ -11,8 +11,8 @@ spec:
       events:
         - s3:ObjectCreated:Put
       insecure: true
-      # filter:
-      #   suffix: ".jpg"
+      filter:
+        suffix: ".jpg"
       accessKey:
         name: kubecon-demo-minio
         key: accesskey
