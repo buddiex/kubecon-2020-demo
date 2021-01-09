@@ -164,7 +164,7 @@ spec:
                     container:
                       image: python_next_step:0.4
                       command: [python]
-                      args: ["/app/next_step.py", "rawlog.json"]  # generate the content of hello_world.txt
+                      args: ["/app/next_step.py", "/rawlog.json"]  # generate the content of hello_world.txt
                       imagePullPolicy: IfNotPresent
                     outputs:
                       parameters:
