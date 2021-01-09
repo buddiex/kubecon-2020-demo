@@ -76,6 +76,8 @@ items:
       destination: *dest
       syncPolicy: *policy
 
+
+      argocd app create web-service --repo https://github.com/buddiex/kubecon-2020-demo.git  --path web-service --dest-namespace default --dest-server https://kubernetes.default.svc 
   - apiVersion: v1
     kind: Namespace
     metadata:
