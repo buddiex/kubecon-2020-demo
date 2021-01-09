@@ -136,12 +136,11 @@ spec:
                           parameters:
                           - name: path
                             value: "{{workflow.parameters.path}}"
-                    # evaluate the result in parallel
-                    - - name: heads
-                        template: form                 # call heads template if "heads"
+                    - - name: form
+                        template: form                 
                         when: "{{steps.next-step.outputs.parameters.rst}} == form"
-                      - name: tails
-                        template: lp5                 # call tails template if "tails"
+                      - name: lp5
+                        template: lp5                
                         when: "{{steps.next-step.outputs.parameters.rst}} == lp5"
                   
                   - name: next-step
@@ -163,7 +162,7 @@ spec:
                           key: secretkey
 
                     container:
-                      image: python_next_step:0.3
+                      image: python_next_step:0.4
                       command: [python]
                       args: ["/app/next_step.py"]  # generate the content of hello_world.txt
                       imagePullPolicy: IfNotPresent
